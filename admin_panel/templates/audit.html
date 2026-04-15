@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1><i class="fas fa-clipboard-list"></i> Audit Log</h1>
+<hr>
+
+<div class="table-container">
+    <table class="table table-hover table-sm">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Action</th>
+                <th>Performed By</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs | reverse %}
+            <tr>
+                <td>
+                    <small>{{ log.timestamp }}</small>
+                </td>
+                <td>
+                    <span class="badge bg-info">{{ log.action }}</span>
+                </td>
+                <td>{{ log.performed_by }}</td>
+                <td>{{ log.details }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted">No audit log entries</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

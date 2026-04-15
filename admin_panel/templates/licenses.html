@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1><i class="fas fa-key"></i> License Management</h1>
+<hr>
+
+<div class="form-section mb-4">
+    <h4>Assign License to User</h4>
+    <form method="POST" action="{{ url_for('assign_license') }}">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="license_id" class="form-label">License ID</label>
+                    <select class="form-control" id="license_id" name="license_id" required>
+                        <option value="">-- Select a License --</option>
+                        {% for license in licenses %}
+                            {% if license.status == 'available' %}
+                            <option value="{{ license.id }}">{{ license.id }} ({{ license.type }})</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="assign_email" class="form-label">User Email</label>
+                    <input type="email" class="form-control" id="assign_email" name="assign_email" placeholder="Enter user email" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-success w-100">Assign License</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="table-container">
+    <h3>All Licenses</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for license in licenses %}
+            <tr>
+                <td><strong>{{ license.id }}</strong></td>
+                <td>{{ license.type }}</td>
+                <td>
+                    {% if license.status == 'available' %}
+                        <span class="badge badge-available">Available</span>
+                    {% else %}
+                        <span class="badge bg-success">Active</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if license.assigned_to %}
+                        {{ users_by_id[license.assigned_to].name if license.assigned_to in users_by_id else 'Unknown' }}
+                    {% else %}
+                        <span class="text-muted">--</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if license.assigned_to and license.assigned_to in users_by_id %}
+                        {{ users_by_id[license.assigned_to].email }}
+                    {% else %}
+                        <span class="text-muted">--</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">No licenses found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
